@@ -71,7 +71,7 @@ spec:
     spec:
       containers:
         - name: helm-operator
-          image: quay.io/roboll/helm-operator:v1.0.0
+          image: bitnami/helm:3.10.3
           imagePullPolicy: IfNotPresent
           command:
             - /bin/helm-operator
