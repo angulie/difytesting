@@ -1,0 +1,8 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmRepository
+metadata:
+  name: dify-repo
+  namespace: dify
+spec:
+  url: https://borispolonsky.github.io/dify-helm
+  interval: 10m0s
