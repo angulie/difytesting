@@ -1,0 +1,20 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmRelease
+metadata:
+  name: dify
+  namespace: dify
+spec:
+  releaseName: my-dify-release
+  chart:
+    spec:
+      chart: dify
+      version: latest
+      sourceRef:
+        kind: HelmRepository
+        name: dify-repo
+  values:
+    postgres:
+      password: difyai123456
+    redis:
+      password: redispassword
+    # Any other configuration values for the Dify chart
