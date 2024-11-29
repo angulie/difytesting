@@ -1308,3 +1308,51 @@ spec:
     targetPort: 80
     nodePort: 30000
 # Dify Nginx Server End
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dify-ingress
+  namespace: dify
+spec:
+  ingressClassName: "traefik"
+  rules:
+    - host: dify.angulie.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /console/api
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /files
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+  tls:
+    - secretName: dify-tls
