@@ -1176,7 +1176,7 @@ data:
         }
 
         location /api {
-          proxy_pass http://dify-api:5001;
+          proxy_pass http://api.angulie.com:5001;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
           proxy_http_version 1.1;
@@ -1187,7 +1187,7 @@ data:
         }
 
         location /v1 {
-          proxy_pass http://dify-api:5001;
+          proxy_pass http://api.angulie.com:5001;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
           proxy_http_version 1.1;
@@ -1198,7 +1198,7 @@ data:
         }
 
         location /files {
-          proxy_pass http://dify-api:5001;
+          proxy_pass http://api.angulie.com:5001;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
           proxy_set_header X-Forwarded-Proto $scheme;
           proxy_http_version 1.1;
@@ -1293,48 +1293,53 @@ spec:
     targetPort: 80
 
 ---
-apiVersion: traefik.containo.us/v1alpha1
-kind: IngressRoute
+# Dify Nginx Server End
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: dify-ingressroute
+  name: dify-ingress-test
   namespace: dify
 spec:
-  entryPoints:
-    - web
-    - websecure
-  routes:
-    - kind: Rule
-      # console web url
-      match: Host(`dify.angulie.com`) && PathPrefix(`/`)
-      services:
-        - name: dify-web
-          port: 3000
-    - kind: Rule
-      # app web url
-      match: Host(`difyapp.angulie.com`) && PathPrefix(`/`)
-      services:
-        - name: dify-web
-          port: 3000
-    - kind: Rule
-      # service api url
-      match: Host(`difyapi.angulie.com`) && PathPrefix(`/`)
-      services:
-        - name: dify-api
-          port: 5001
-    - kind: Rule
-      # console api url
-      match: Host(`consoleapi.angulie.com`) && PathPrefix(`/`)
-      services:
-        - name: dify-api
-          port: 5001
-
-    - kind: Rule
-      # app api url
-      match: Host(`appapi.angulie.com`) && PathPrefix(`/`)
-      services:
-        - name: dify-api
-          port: 5001
+  ingressClassName: "traefik"
+  rules:
+    - host: dify.angulie.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /console/api
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /v1
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
+          - path: /files
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
   tls:
-    secretName: dify-tls
-# Traefik Middleware for Ingress
+    - secretName: dify-tls
 
