@@ -1306,32 +1306,24 @@ spec:
     - kind: Rule
       # console web url
       match: Host(`dify.angulie.com`) && PathPrefix(`/`)
-      middlewares:
-        - name: ingress-cors
       services:
         - name: dify-web
           port: 3000
     - kind: Rule
       # app web url
       match: Host(`difyapp.angulie.com`) && PathPrefix(`/`)
-      middlewares:
-        - name: ingress-cors
       services:
         - name: dify-web
           port: 3000
     - kind: Rule
       # service api url
       match: Host(`difyapi.angulie.com`) && PathPrefix(`/`)
-      middlewares:
-        - name: ingress-cors
       services:
         - name: dify-api
           port: 5001
     - kind: Rule
       # console api url
       match: Host(`consoleapi.angulie.com`) && PathPrefix(`/`)
-      middlewares:
-        - name: ingress-cors
       services:
         - name: dify-api
           port: 5001
@@ -1339,8 +1331,6 @@ spec:
     - kind: Rule
       # app api url
       match: Host(`appapi.angulie.com`) && PathPrefix(`/`)
-      middlewares:
-        - name: ingress-cors
       services:
         - name: dify-api
           port: 5001
