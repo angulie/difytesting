@@ -1299,7 +1299,8 @@ spec:
               service:
                 name: dify-nginx-web
                 port:
-                  number: 80
+                  number: 443
+                  
 ---
 
 # LoadBalancer Service for api.dify.angulie.com
@@ -1330,6 +1331,9 @@ spec:
   ports:
     - name: http
       port: 80
+      targetPort: 3000
+    - name: https
+      port: 443
       targetPort: 3000
 ---
 
