@@ -1293,66 +1293,58 @@ spec:
     targetPort: 80
 
 ---
-kind: Service
-apiVersion: v1
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
 metadata:
-  name: dify-nginx-nodeport
+  name: dify-ingressroute
   namespace: dify
 spec:
-  selector:
-    app: dify-nginx
-  type: NodePort
-  ports:
-  - name: dify-nginx
-    port: 80
-    targetPort: 80
-    nodePort: 30000
-# Dify Nginx Server End
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: dify-ingress-test
-  namespace: dify
-spec:
-  ingressClassName: "traefik"
-  rules:
-    - host: dify.angulie.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /console/api
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /v11
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /files
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - kind: Rule
+      # console web url
+      match: Host(`dify.angulie.com`) && PathPrefix(`/`)
+      middlewares:
+        - name: ingress-cors
+      services:
+        - name: dify-web
+          port: 3000
+    - kind: Rule
+      # app web url
+      match: Host(`difyapp.angulie.com`) && PathPrefix(`/`)
+      middlewares:
+        - name: ingress-cors
+      services:
+        - name: dify-web
+          port: 3000
+    - kind: Rule
+      # service api url
+      match: Host(`difyapi.angulie.com`) && PathPrefix(`/`)
+      middlewares:
+        - name: ingress-cors
+      services:
+        - name: dify-api
+          port: 5001
+    - kind: Rule
+      # console api url
+      match: Host(`consoleapi.angulie.com`) && PathPrefix(`/`)
+      middlewares:
+        - name: ingress-cors
+      services:
+        - name: dify-api
+          port: 5001
+
+    - kind: Rule
+      # app api url
+      match: Host(`appapi.angulie.com`) && PathPrefix(`/`)
+      middlewares:
+        - name: ingress-cors
+      services:
+        - name: dify-api
+          port: 5001
   tls:
-    - secretName: dify-tls
+    secretName: dify-tls
+# Traefik Middleware for Ingress
+
