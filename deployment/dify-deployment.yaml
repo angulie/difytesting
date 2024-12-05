@@ -1300,7 +1300,7 @@ metadata:
   namespace: dify
 spec:
   selector:
-    app: dify-nginx
+    app: dify-api
   type: LoadBalancer
   ports:
     - name: http
