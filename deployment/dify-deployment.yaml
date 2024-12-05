@@ -1278,20 +1278,30 @@ spec:
       - name: dify-nginx-config
         emptyDir: {}
 ---
-kind: Service
-apiVersion: v1
+# Ingress for dify-nginx-web with GCP Managed Certificate
+apiVersion: networking.k8s.io/v1
+kind: Ingress
 metadata:
-  name: dify-nginx
+  name: dify-nginx-web-ingress
   namespace: dify
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "dify-console"  # Replace with your static IP name
+    networking.gke.io/managed-certificates: "managed-cert"  # Reference your GCP managed certificate
+    kubernetes.io/ingress.class: "gce"  # Use GCE ingress controller
 spec:
-  selector:
-    app: dify-nginx
-  type: LoadBalancer
-  ports:
-  - name: dify-nginx
-    port: 80
-    targetPort: 80
+  rules:
+    - host: difyconsole.angulie.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: dify-nginx
+                port:
+                  number: 80
 ---
+
 # LoadBalancer Service for api.dify.angulie.com
 apiVersion: v1
 kind: Service
@@ -1372,4 +1382,13 @@ spec:
                   number: 80
   tls:
     - secretName: dify-tls
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: managed-cert
+spec:
+  domains:
+    - difyconsole.angulie.com
+    - difyapi.angulie.com
 
