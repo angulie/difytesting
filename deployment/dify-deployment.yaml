@@ -740,15 +740,15 @@ spec:
         - name: SECRET_KEY
           value: "sk-9f73s3ljTXVcMT3Blb3ljTqtsKiGHXVcMT3BlbkFJLK7U"
         - name: CONSOLE_WEB_URL
-          value: "http://34.88.239.121/"
+          value: "http://34.88.239.121"
         - name: INIT_PASSWORD
           value: password
         - name: CONSOLE_API_URL
-          value: "http://34.88.239.121/"
+          value: "http://34.88.239.121"
         - name: SERVICE_API_URL
-          value: "http://34.88.239.121/"
+          value: "http://34.88.239.121"
         - name: APP_WEB_URL
-          value: "http://34.88.239.121/"
+          value: "http://34.88.239.121"
         - name: FILES_URL
           value: ""
         - name: MIGRATION_ENABLED
@@ -1306,6 +1306,21 @@ spec:
     - name: http
       port: 80
       targetPort: 5001
+---
+# LoadBalancer Service for api.dify.angulie.com
+apiVersion: v1
+kind: Service
+metadata:
+  name: dify-nginx-web
+  namespace: dify
+spec:
+  selector:
+    app: dify-web
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000
 ---
 
 # Dify Nginx Server End
