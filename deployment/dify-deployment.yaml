@@ -862,6 +862,8 @@ spec:
           value: 'http://dify-ssrf:3128'
         - name: SSRF_PROXY_HTTPS_URL
           value: 'http://dify-ssrf:3128'
+        - name: SERVICE_API_URL
+          value: 'api/v1'
         resources:
           requests:
             cpu: 200m
