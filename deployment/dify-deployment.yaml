@@ -746,7 +746,7 @@ spec:
         - name: CONSOLE_API_URL
           value: ""
         - name: SERVICE_API_URL
-          value: ""
+          value: "http://34.88.239.121/v1"
         - name: APP_WEB_URL
           value: ""
         - name: FILES_URL
@@ -862,8 +862,6 @@ spec:
           value: 'http://dify-ssrf:3128'
         - name: SSRF_PROXY_HTTPS_URL
           value: 'http://dify-ssrf:3128'
-        - name: SERVICE_API_URL
-          value: 'api/v1'
         resources:
           requests:
             cpu: 200m
