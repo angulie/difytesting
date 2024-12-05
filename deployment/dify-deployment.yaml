@@ -1297,7 +1297,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: dify-nginx
+                name: dify-nginx-web
                 port:
                   number: 80
 ---
