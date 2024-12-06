@@ -1297,9 +1297,9 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: dify-nginx-web
+                name: dify-nginx-api
                 port:
-                  number: 443
+                  number: 80
                   
 ---
 
