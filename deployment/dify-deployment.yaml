@@ -1276,33 +1276,8 @@ spec:
           name: dify-nginx
       # Persistent volume could be better
       - name: dify-nginx-config
-        emptyDir: {}
+        emptyDir: {}                  
 ---
-# Ingress for dify-nginx-web with GCP Managed Certificate
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: dify-nginx-web-ingress
-  namespace: dify
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: "dify-console"  # Replace with your static IP name
-    networking.gke.io/managed-certificates: "managed-cert"  # Reference your GCP managed certificate
-    kubernetes.io/ingress.class: "gce"  # Use GCE ingress controller
-spec:
-  rules:
-    - host: difyconsole.angulie.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx-api
-                port:
-                  number: 80
-                  
----
-
 # LoadBalancer Service for api.dify.angulie.com
 apiVersion: v1
 kind: Service
@@ -1317,82 +1292,126 @@ spec:
     - name: http
       port: 80
       targetPort: 5001
+
 ---
-# LoadBalancer Service for api.dify.angulie.com
 apiVersion: v1
 kind: Service
 metadata:
-  name: dify-nginx-web
-  namespace: dify
+  name: traefik-console
+  namespace: traefik
+  annotations:
+    networking.gke.io/managed-certificates: google-managed-certificate-console
+    cloud.google.com/load-balancer-type: "External"
+    cloud.google.com/load-balancer-ip: "dify-console"
 spec:
   selector:
-    app: dify-web
+    app.kubernetes.io/name: traefik
   type: LoadBalancer
   ports:
-    - name: http
-      port: 80
-      targetPort: 3000
-    - name: https
+    - protocol: TCP
       port: 443
-      targetPort: 3000
+      name: websecure
 ---
-
-# Dify Nginx Server End
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: v1
+kind: Service
 metadata:
-  name: dify-ingress-test
+  name: traefik-api
+  namespace: traefik
+  annotations:
+    networking.gke.io/managed-certificates: google-managed-certificate-api
+    cloud.google.com/load-balancer-type: "External"
+    cloud.google.com/load-balancer-ip: "dify-api"
+spec:
+  selector:
+    app.kubernetes.io/name: traefik
+  type: LoadBalancer
+  ports:
+    - protocol: TCP
+      port: 443
+      name: websecure
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dify-console-ingressroute
   namespace: dify
 spec:
-  ingressClassName: "traefik"
-  rules:
-    - host: dify.angulie.com
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /api
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /console/api
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /v1
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
-          - path: /files
-            pathType: Prefix
-            backend:
-              service:
-                name: dify-nginx
-                port:
-                  number: 80
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`difyconsole.angulie.com`) && PathPrefix(`/`)
+      middlewares:
+        - name: ingress-cors-console
+      services:
+        - name: dify-web
+          port: 3000
   tls:
-    - secretName: dify-tls
+    secretName: google-managed-certificate-console
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ingress-cors-console
+  namespace: dify
+spec:
+  headers:
+    accessControlAllowCredentials: true
+    accessControlAllowMethods:
+      - "GET"
+      - "OPTIONS"
+      - "PUT"
+      - "POST"
+      - "DELETE"
+      - "PATCH"
+    accessControlAllowHeaders:
+      - "Content-Type"
+      - "Authorization"
+    accessControlAllowOriginList:
+      - "https://difyconsole.angulie.com"
+    accessControlMaxAge: 100
+    addVaryHeader: true
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: ingress-cors-api
+  namespace: dify
+spec:
+  headers:
+    accessControlAllowCredentials: true
+    accessControlAllowMethods:
+      - "GET"
+      - "OPTIONS"
+      - "PUT"
+      - "POST"
+      - "DELETE"
+      - "PATCH"
+    accessControlAllowHeaders:
+      - "Content-Type"
+      - "Authorization"
+    accessControlAllowOriginList:
+      - "https://difyapi.angulie.com"
+    accessControlMaxAge: 100
+    addVaryHeader: true
 ---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: managed-cert
+  name: google-managed-certificate-console
+  namespace: dify
 spec:
   domains:
     - difyconsole.angulie.com
+---
+apiVersion: networking.gke.io/v1
+kind: ManagedCertificate
+metadata:
+  name: google-managed-certificate-api
+  namespace: dify
+spec:
+  domains:
     - difyapi.angulie.com
+
+
 
