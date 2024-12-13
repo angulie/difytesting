@@ -1301,10 +1301,10 @@ metadata:
   namespace: dify
   annotations:
     kubernetes.io/ingress.global-static-ip-name: "dify-console"  # Use your global static IP
-    networking.gke.io/managed-certificates: "dify-managed-cert1"
+    networking.gke.io/managed-certificates: "dify-managed-cert2"
     kubernetes.io/ingress.class: "gce"
     #ingress.gcp.kubernetes.io/pre-shared-cert: "dify-cert"  # For Google-managed certificates
-    ingress.kubernetes.io/ssl-redirect: "true"
+    #ingress.kubernetes.io/ssl-redirect: "true"
 spec:
   rules:
   - host: difyconsole.angulie.com
@@ -1317,31 +1317,30 @@ spec:
             name: dify-web
             port:
               number: 3000
-  - host: difyapi.angulie.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: dify-api
-            port:
-              number: 5001
-  tls:
+#  - host: difyapi.angulie.com
+ #   http:
+  #    paths:
+   #   - path: /
+    #    pathType: Prefix
+     #   backend:
+      #    service:
+       #     name: dify-api
+        #    port:
+         #     number: 5001
+  #tls:
   - hosts:
     - difyconsole.angulie.com
-    - difyapi.angulie.com
+    #- difyapi.angulie.com
 ---
 
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: dify-managed-cert1
+  name: dify-managed-cert2
   namespace: dify
 spec:
   domains:
     - difyconsole.angulie.com
-    - difyapi.angulie.com
 
 
 
