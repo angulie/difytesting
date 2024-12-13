@@ -1116,7 +1116,7 @@ spec:
     targetPort: 3000
     protocol: TCP
     name: dify-web
-  type: LoadBalancer
+  type: NodePort
   selector:
     app: dify-web
 
@@ -1301,7 +1301,7 @@ metadata:
   namespace: dify
   annotations:
     kubernetes.io/ingress.global-static-ip-name: "dify-console"  # Use your global static IP
-    #networking.gke.io/managed-certificates: "dify-managed-cert3"
+    networking.gke.io/managed-certificates: "dify-managed-cert2"
     kubernetes.io/ingress.class: "gce"
     #ingress.gcp.kubernetes.io/pre-shared-cert: "dify-cert"  # For Google-managed certificates
     #ingress.kubernetes.io/ssl-redirect: "true"
@@ -1320,7 +1320,6 @@ spec:
   tls:
   - hosts:
     - difyconsole.angulie.com
-    secretName: dify-tls-test
 #  - host: difyapi.angulie.com
  #   http:
   #    paths:
