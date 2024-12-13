@@ -1317,9 +1317,9 @@ spec:
             name: dify-web
             port:
               number: 3000
-  tls:
-  - hosts:
-    - difyconsole.angulie.com
+ # tls:
+ # - hosts:
+  #  - difyconsole.angulie.com
 #  - host: difyapi.angulie.com
  #   http:
   #    paths:
