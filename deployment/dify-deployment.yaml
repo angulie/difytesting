@@ -1327,7 +1327,7 @@ spec:
        #     name: dify-api
         #    port:
          #     number: 5001
-  #tls:
+  tls:
   - hosts:
     - difyconsole.angulie.com
     #- difyapi.angulie.com
