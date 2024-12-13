@@ -1301,8 +1301,9 @@ metadata:
   namespace: dify
   annotations:
     kubernetes.io/ingress.global-static-ip-name: dify-console  # Use your global static IP
-    networking.gke.io/managed-certificates: dify-managed-cert2
+    networking.gke.io/managed-certificates: dify-managed-cert4
     kubernetes.io/ingress.class: "gce"
+    networking.gke.io/v1beta1.FrontendConfig: ingress-security-config
     #ingress.gcp.kubernetes.io/pre-shared-cert: "dify-cert"  # For Google-managed certificates
     #ingress.kubernetes.io/ssl-redirect: "true"
 spec:
@@ -1331,11 +1332,19 @@ spec:
         #    port:
          #     number: 5001
 ---
-
+apiVersion: networking.gke.io/v1beta1
+kind: FrontendConfig
+metadata:
+  name: ingress-security-config
+spec:
+  sslPolicy: gke-ingress-ssl-policy-https
+  redirectToHttps:
+    enabled: true
+---
 apiVersion: networking.gke.io/v1
 kind: ManagedCertificate
 metadata:
-  name: dify-managed-cert2
+  name: dify-managed-cert4
   namespace: dify
 spec:
   domains:
