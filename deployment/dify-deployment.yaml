@@ -1317,6 +1317,10 @@ spec:
             name: dify-web
             port:
               number: 3000
+  tls:
+  - hosts:
+    - difyconsole.angulie.com
+    secretName: dify-tls-test
 #  - host: difyapi.angulie.com
  #   http:
   #    paths:
@@ -1327,11 +1331,6 @@ spec:
        #     name: dify-api
         #    port:
          #     number: 5001
-  tls:
-  - hosts:
-    - difyconsole.angulie.com
-  secretName: dify-tls-test
-    #- difyapi.angulie.com
 ---
 
 apiVersion: networking.gke.io/v1
