@@ -1116,7 +1116,7 @@ spec:
     targetPort: 3000
     protocol: TCP
     name: dify-web
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: dify-web
 
